@@ -1,6 +1,7 @@
-###
-# role and policy for eks cluster
-###
+
+####
+## role and policy for eks cluster
+####
 resource "aws_iam_role" "eks_role" {
   name = "role-cluster-example"
 
@@ -25,41 +26,41 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEKSClusterPolicy" {
   role       = aws_iam_role.eks_role.name
 }
 
-# Optionally, enable Security Groups for Pods
-# Reference: https://docs.aws.amazon.com/eks/latest/userguide/security-groups-for-pods.html
+## Optionally, enable Security Groups for Pods
+## Reference: https://docs.aws.amazon.com/eks/latest/userguide/security-groups-for-pods.html
 resource "aws_iam_role_policy_attachment" "example-AmazonEKSVPCResourceController" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.eks_role.name
 }
 
-###
-## fetch subnetids
-###
-#data "aws_subnets" "example" {
-#  filter {
-#    name   = "vpc-id"
-#    values = [var.vpc_id]
-#  }
-#}
+####
+### fetch subnetids
+####
+##data "aws_subnets" "example" {
+##  filter {
+##    name   = "vpc-id"
+##    values = [var.vpc_id]
+##  }
+##}
+##
+##data "aws_subnet" "example" {
+##  for_each = toset(data.aws_subnets.example.ids)
+##  id       = each.value
+##}
+##
+##output "subnet_cidr_blocks" {
+##  value = [for s in data.aws_subnet.example : s]
+##}
 #
-#data "aws_subnet" "example" {
-#  for_each = toset(data.aws_subnets.example.ids)
-#  id       = each.value
-#}
 #
-#output "subnet_cidr_blocks" {
-#  value = [for s in data.aws_subnet.example : s]
-#}
-
-
-###
-# eks creation
-###
+####
+## eks creation
+####
 resource "aws_eks_cluster" "wordpress_k8" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks_role.arn
   vpc_config {
-    subnet_ids = [var.subnet1, var.subnet2]
+    subnet_ids = [ var.priv_subnet_id, var.publ_subnet_id]
   }
   depends_on = [
     aws_iam_role.eks_role,
@@ -68,9 +69,9 @@ resource "aws_eks_cluster" "wordpress_k8" {
   ]
 }
 
-####
-# EKS node group role
-####
+#####
+## EKS node group role
+#####
 resource "aws_iam_role" "eks_nodegroup_role" {
   name = "eks-node-group-example"
 
@@ -101,14 +102,14 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEC2ContainerRegistryRea
   role       = aws_iam_role.eks_nodegroup_role.name
 }
 
-####
-# eks node group creation
-####
+######
+### eks node group creation
+######
 resource "aws_eks_node_group" "wordpress_eks_ng" {
   cluster_name  = aws_eks_cluster.wordpress_k8.name
   node_group_name = "apps_ng1"
   node_role_arn = aws_iam_role.eks_nodegroup_role.arn
-  subnet_ids    = [ var.subnet1, var.subnet2]
+  subnet_ids    = [var.priv_subnet_id, var.publ_subnet_id]
   scaling_config {
     desired_size = 3
     max_size     = 4
@@ -124,7 +125,7 @@ resource "aws_eks_node_group" "wordpress_eks_ng" {
 
 resource "null_resource" "kubeconfig_file" {
   provisioner "local-exec" {
-    command = "aws eks update-kubeconfig --region ${var.region} --name ${var.cluster_name} --profile ${var.aws_profile}"
+    command = "aws eks update-kubeconfig --region us-east-1 --name ${var.cluster_name}"
   }
   depends_on = [aws_eks_node_group.wordpress_eks_ng]
 }

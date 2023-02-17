@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rearc-webapp
+  namespace: rearc
+spec:
+  selector:
+    matchLabels:
+      run: rearc-webapp
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: rearc-webapp
+    spec:
+      containers:
+        - name: rearc-webapp
+          image: xyz-change-later-to-ecr
+          ports:
+            - containerPort: 3000
