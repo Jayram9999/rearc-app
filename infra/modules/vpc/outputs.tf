@@ -7,5 +7,5 @@ output "private_subnets" {
 }
 
 output "public_subnets" {
-  value = module.vpc.public_subnets[2]
+  value = module.vpc.public_subnets[1]
 }

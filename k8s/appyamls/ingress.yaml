@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # load balancer priority, lower numbers are evaluated first
+    # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-update-rules.html#update-rule-priority
+    alb.ingress.kubernetes.io/group.order: "10"
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "50" # in seconds
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "40"
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healty-threshold-count: "1"
+    #alb.ingress.kubernetes.io/target-type: ip
+    # by default, it will create a listener rule on port 80
+    # you can specify both ports as well like this: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+    #kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    external-dns.alpha.kubernetes.io/hostname: rearc.govardhanmundlur.com
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:508460187788:certificate/23ee92bd-df63-4c56-b788-6219775643fa"
+  name: rearc-ingress
+  namespace: rearc
+spec:
+  # if you have the `ingressclass.kubernetes.io/is-default-class=true`
+  # annotation on the ingress class, you don't need this
+  ingressClassName: alb
+  rules:
+    - host: rearc.govardhanmundlur.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: rearc-webapp
+                port:
+                  number: 3000
+            path: /
+            pathType: Prefix
+  # the ALB will fetch the right certificate from ACM
+  # you can also specify manually using `alb.ingress.kubernetes.io/certificate-arn` annotation on the Ingress
+  # https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/guide/ingress/annotations/#certificate-arn
+  tls:
+    - hosts:
+        - "*.govardhanmundlur.com"
+      secretName: govardhanmundlur-tls

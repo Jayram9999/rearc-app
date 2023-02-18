@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       run: rearc-webapp
-  replicas: 2
+  replicas: 3
   template:
     metadata:
       labels:
@@ -15,6 +15,12 @@ spec:
     spec:
       containers:
         - name: rearc-webapp
-          image: xyz-change-later-to-ecr
+          image: 508460187788.dkr.ecr.us-east-1.amazonaws.com/rearc-quest:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: SECRET_WORD
+              valueFrom:
+                secretKeyRef:
+                  name: rearc-secret
+                  key: SECRET_WORD
