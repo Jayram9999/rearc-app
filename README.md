@@ -6,6 +6,8 @@ Following tools/technologies are used for infra:
 - External-dns
 - AWS Load Balancer Controller
 
+<img width="1216" alt="image" src="https://user-images.githubusercontent.com/42488160/220356386-862c07fd-c55c-4752-a795-c011d9f9e378.png">
+
 ============
 
 Overview:
