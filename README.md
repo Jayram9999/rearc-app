@@ -8,20 +8,6 @@ Following tools/technologies are used for infra:
 
 ============
 
-How to deploy?
-
-Prerequisite: 
-- Install Terraform, Kubectl and AWS cli
-- Setup IAM role or Access key based authenticaton (preferrable use IAM Role, if not session based token)
-- Linux Server to execute the script
-
-1. Initiate the deployment of infra by executing the command:
-   `terraform init`
-
-
-
-
-
 Overview:
 
 - Terraform 
@@ -47,4 +33,24 @@ https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.ht
 
 Ingress is configured with annnotations of AWS Load Balancer Controller to provision, register with target group and also create a record in Route53 (external-dns).
 
+========================
 
+How to deploy?
+
+Prerequisite: 
+- Install Terraform, Kubectl and AWS cli
+- Setup IAM role or Access key based authenticaton (preferrable use IAM Role, if not session based token)
+- Linux Server to execute the script
+
+1. Initiate the deployment of infra by executing the command:
+   `terraform init`
+  
+2. Run `terraform plan` to verify the infrastructure resources
+
+3. Execute `terraform apply` to create the resources. Resource creation takes approximately 20-25mins, wait till the deployment completes.
+
+4. Once the AWS infra resources are created, execute the shell script to deploy the Kubernetes objects.
+
+Improvements: 
+
+Dynamically update the docker image tag for K8s deployment file every time the script is run. This can be achieved by using simple shell script such as yq and increment the tag version number by fetching the last tag details from the ECR. 
