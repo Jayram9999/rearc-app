@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: rearc-webapp
-          image: ow to:latest
+          image: default:latest
           ports:
             - containerPort: 3000
           env:
