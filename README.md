@@ -57,3 +57,4 @@ Improvements:
 
 - Dynamically update the docker image tag for K8s deployment file every time the script is run. This can be achieved by using simple shell script such as yq and increment the tag version number by fetching the last tag details from the ECR. (In progress)
 - Setup ArgoCD with a application.yaml file for the deployment of the app
+- Used self-signed and it is not secure, I have requested for a valid certificate since I own the domain, will update it once I have it.
