@@ -1,4 +1,4 @@
-A nodejs webapp hosting on Kubernetes using terraform and AWS Cloud.
+A nodejs webapp hosting on Kubernetes using terraform and AWS Cloud
 
 Following tools/technologies are used for infra:
 - Terraform
